@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Финансы</title>
+    <title>Семейные финансы</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -418,6 +418,20 @@
             color: #3390ec;
         }
         
+        .shared-notice {
+            background: linear-gradient(135deg, rgba(51, 144, 236, 0.1), rgba(139, 92, 246, 0.1));
+            border: 2px solid #3390ec;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .shared-notice p {
+            font-size: 14px;
+            color: #3390ec;
+            font-weight: 600;
+        }
+        
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
             .sidebar { transform: translateX(-100%); }
@@ -440,7 +454,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="https://i.pinimg.com/736x/86/cd/8d/86cd8d447e69b8a321e2c011d68d1b1a.jpg" alt="Finance" class="sidebar-avatar">
-            <div class="sidebar-title">💰 Финансы</div>
+            <div class="sidebar-title">👨‍👩‍👧‍👦 Семья</div>
         </div>
         <div class="sidebar-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
             <span>📊</span> Обзор
@@ -458,18 +472,22 @@
     
     <div class="main-content">
         <div id="dashboardTab" class="content">
-            <h1 class="header-title">📊 Обзор финансов</h1>
+            <div class="shared-notice">
+                <p>🔓 Общий доступ для всей семьи</p>
+            </div>
+            
+            <h1 class="header-title">📊 Семейный бюджет</h1>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">💵 Баланс</div>
+                    <div class="stat-label">💵 Общий баланс</div>
                     <div class="stat-value" id="totalBalance">0 ₽</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">📥 Доходы</div>
+                    <div class="stat-label">📥 Доходы семьи</div>
                     <div class="stat-value income" id="totalIncome">0 ₽</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">📤 Расходы</div>
+                    <div class="stat-label">📤 Расходы семьи</div>
                     <div class="stat-value expense" id="totalExpense">0 ₽</div>
                 </div>
             </div>
@@ -481,13 +499,17 @@
                     <div class="stat-label" style="font-size: 12px;">Расходы: <span id="monthExpense" style="color: #ff4444; font-weight: 700;">0 ₽</span></div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">📊 За всё время</div>
-                    <div class="stat-label" style="font-size: 12px; margin-top: 8px;">Транзакций: <span id="totalTransactions" style="color: #3390ec; font-weight: 700;">0</span></div>
+                    <div class="stat-label">📊 Всего транзакций</div>
+                    <div class="stat-label" style="font-size: 12px; margin-top: 8px;">За всё время: <span id="totalTransactions" style="color: #3390ec; font-weight: 700;">0</span></div>
                 </div>
             </div>
         </div>
         
         <div id="addTab" class="content">
+            <div class="shared-notice">
+                <p>🔓 Добавлено в общий семейный доступ</p>
+            </div>
+            
             <h1 class="header-title">➕ Добавить транзакцию</h1>
             <div class="form-container">
                 <div class="btn-group">
@@ -531,11 +553,15 @@
                     <textarea id="note" placeholder="Дополнительная информация..."></textarea>
                 </div>
                 
-                <button class="action-btn" onclick="saveTransaction()">💾 Сохранить</button>
+                <button class="action-btn" onclick="saveTransaction()">💾 Сохранить в общий доступ</button>
             </div>
         </div>
         
         <div id="transactionsTab" class="content">
+            <div class="shared-notice">
+                <p>🔓 Видят все члены семьи</p>
+            </div>
+            
             <h1 class="header-title">📋 Транзакции</h1>
             <div class="filter-container">
                 <button class="filter-btn active" onclick="setTransactionFilter('all')">Все</button>
@@ -548,6 +574,10 @@
         </div>
         
         <div id="analyticsTab" class="content">
+            <div class="shared-notice">
+                <p>🔓 Общая аналитика семьи</p>
+            </div>
+            
             <h1 class="header-title">📈 Аналитика</h1>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -641,15 +671,15 @@
 
         async function loadData() {
             return new Promise(resolve => {
-                tg.CloudStorage.getItems(['transactions'], (err, result) => {
-                    transactions = result['transactions'] ? JSON.parse(result['transactions']) : [];
+                tg.CloudStorage.getItems(['family_transactions'], (err, result) => {
+                    transactions = result['family_transactions'] ? JSON.parse(result['family_transactions']) : [];
                     resolve();
                 });
             });
         }
 
         async function saveData() {
-            tg.CloudStorage.setItem('transactions', JSON.stringify(transactions));
+            tg.CloudStorage.setItem('family_transactions', JSON.stringify(transactions));
             renderDashboard();
         }
 
@@ -683,7 +713,7 @@
             document.getElementById('date').value = '';
             document.getElementById('note').value = '';
 
-            tg.showAlert('✅ Транзакция сохранена!');
+            tg.showAlert('✅ Добавлено в общий доступ!');
             renderTransactions();
         }
 
@@ -857,7 +887,7 @@
         function deleteTransaction(index = currentTransactionIndex) {
             if (index === null) return;
             
-            tg.showConfirm('🗑️ Удалить транзакцию?', async ok => {
+            tg.showConfirm('🗑️ Удалить из общего доступа?', async ok => {
                 if (ok) {
                     transactions.splice(index, 1);
                     await saveData();
