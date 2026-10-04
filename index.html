@@ -846,7 +846,6 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        // КАТЕГОРИИ - инициализируем сразу
         const incomeCategories = [
             '💼 Зарплата', '🎁 Подарок', '📈 Инвестиции', '💰 Премия', 
             '🏆 Бонус', '💵 Подработка', '📊 Дивиденды', '🏠 Аренда',
@@ -918,7 +917,6 @@
             });
         }
 
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ - заполняем категории при инициализации
         function setType(type) {
             currentType = type;
             document.querySelectorAll('.btn-type').forEach(btn => {
@@ -974,18 +972,37 @@
             renderAnalytics();
         }
 
+        // ИСПРАВЛЕННАЯ ЗАГРУЗКА - используем один ключ для всех
         async function loadData() {
             return new Promise(resolve => {
-                tg.CloudStorage.getItems(['family_transactions_shared'], (err, result) => {
-                    transactions = result['family_transactions_shared'] ? JSON.parse(result['family_transactions_shared']) : [];
+                // КЛЮЧ family_shared одинаковый для всех аккаунтов!
+                tg.CloudStorage.getItems(['family_shared'], (err, result) => {
+                    if (err) {
+                        console.error('Ошибка загрузки:', err);
+                        transactions = [];
+                    } else {
+                        transactions = result['family_shared'] ? JSON.parse(result['family_shared']) : [];
+                        console.log('Загружено транзакций:', transactions.length);
+                    }
                     resolve();
                 });
             });
         }
 
+        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ - один ключ для всех
         async function saveData() {
-            tg.CloudStorage.setItem('family_transactions_shared', JSON.stringify(transactions));
-            renderDashboard();
+            return new Promise((resolve, reject) => {
+                // КЛЮЧ family_shared одинаковый для всех аккаунтов!
+                tg.CloudStorage.setItem('family_shared', JSON.stringify(transactions), (err) => {
+                    if (err) {
+                        console.error('Ошибка сохранения:', err);
+                        reject(err);
+                    } else {
+                        console.log('Сохранено транзакций:', transactions.length);
+                        resolve();
+                    }
+                });
+            });
         }
 
         function saveTransaction() {
@@ -1300,63 +1317,4 @@
                 </div>
                 ${t.note ? `
                     <div style="margin-bottom: 16px;">
-                        <div style="font-size: 13px; color: #666; margin-bottom: 6px;">📝 Примечание</div>
-                        <div style="font-size: 15px; color: #555;">${escapeHtml(t.note)}</div>
-                    </div>
-                ` : ''}
-            `;
-            
-            document.getElementById('transactionModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('transactionModal').classList.remove('active');
-            currentTransactionIndex = null;
-        }
-
-        function deleteTransaction(index = currentTransactionIndex) {
-            if (index === null) return;
-            
-            tg.showConfirm('🗑️ Удалить?', async ok => {
-                if (ok) {
-                    transactions.splice(index, 1);
-                    await saveData();
-                    closeModal();
-                    if (transactions[index]?.type === 'saving') {
-                        renderSavings();
-                    } else {
-                        renderTransactions();
-                    }
-                    tg.showAlert('✅ Удалено!');
-                }
-            });
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        document.addEventListener('click', e => {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const btn = document.querySelector('.mobile-menu-btn');
-                if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
-                    closeSidebar();
-                }
-            }
-        });
-
-        document.getElementById('date').valueAsDate = new Date();
-
-        // ИСПРАВЛЕНО - инициализируем категории при загрузке
-        (async () => {
-            await loadData();
-            // Заполняем категории сразу
-            setType('income');
-            renderDashboard();
-        })();
-    </script>
-</body>
-</html>
+                        <div style="font-size: 13px; color: #666; margin-bottom:
