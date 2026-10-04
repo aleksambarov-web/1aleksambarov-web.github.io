@@ -10,14 +10,23 @@
 
 <style>
   :root {
-    --bg: var(--tg-theme-bg-color, #ffffff);
-    --card: var(--tg-theme-secondary-bg-color, #f2f2f7);
-    --text: var(--tg-theme-text-color, #000000);
-    --hint: var(--tg-theme-hint-color, #8e8e93);
-    --button: var(--tg-theme-button-color, #2481cc);
+    --bg: var(--tg-theme-bg-color, #f6f7fb);
+    --card: #ffffff;
+    --text: var(--tg-theme-text-color, #101828);
+    --hint: var(--tg-theme-hint-color, #667085);
+    --button: var(--tg-theme-button-color, #4f7cff);
     --button-text: var(--tg-theme-button-text-color, #ffffff);
-    --green: #2e7d32;
-    --red: #c62828;
+    --green: #12b76a;
+    --red: #f04438;
+    --shadow: 0 8px 24px rgba(16, 24, 40, .08);
+    --radius: 20px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --card: #1c1c1e;
+      --shadow: 0 8px 24px rgba(0, 0, 0, .35);
+    }
   }
 
   * {
@@ -33,124 +42,200 @@
   }
 
   body {
-    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
     min-height: 100vh;
   }
 
-  .app {
-    padding: 14px 14px 0;
+  .hero {
+    background: linear-gradient(135deg, #4f7cff, #8b5cf6);
+    color: #fff;
+    padding: 22px 18px 74px;
+    border-radius: 0 0 28px 28px;
   }
 
-  h1 {
-    font-size: 22px;
-    margin: 4px 0 14px;
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  h3 {
-    margin: 0 0 12px;
+  .hero-title {
+    font-size: 21px;
+    font-weight: 800;
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    opacity: .85;
+    margin-top: 3px;
+  }
+
+  .hero-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,.18);
+    border-radius: 14px;
+    font-size: 21px;
+  }
+
+  .balance-card {
+    margin: -52px 14px 16px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+
+  .balance-label {
+    font-size: 13px;
+    color: var(--hint);
+  }
+
+  .balance-value {
+    font-size: 30px;
+    font-weight: 800;
+    margin-top: 4px;
+  }
+
+  .mini-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .mini-stat {
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 12px;
+  }
+
+  .mini-stat-title {
+    font-size: 12px;
+    color: var(--hint);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mini-stat-value {
     font-size: 17px;
+    font-weight: 800;
+    margin-top: 5px;
+  }
+
+  .app {
+    padding: 0 14px;
   }
 
   .card {
     background: var(--card);
-    border-radius: 18px;
-    padding: 14px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
     margin-bottom: 14px;
   }
 
-  .balance-row {
+  .card-title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 7px 0;
-    font-size: 15px;
-  }
-
-  .big-balance {
-    font-size: 28px;
+    gap: 8px;
+    font-size: 17px;
     font-weight: 800;
-    margin-top: 6px;
+    margin-bottom: 14px;
   }
-
-  .green { color: var(--green); }
-  .red { color: var(--red); }
 
   label {
     display: block;
     font-size: 13px;
     color: var(--hint);
     margin: 12px 0 6px;
+    font-weight: 600;
   }
 
   input, select, textarea {
     width: 100%;
+    min-height: 52px;
     padding: 14px;
-    border-radius: 14px;
-    border: 1px solid var(--hint);
+    border-radius: 16px;
+    border: 1px solid rgba(120,120,128,.22);
     background: var(--bg);
     color: var(--text);
     font-size: 16px;
     outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--button);
+    box-shadow: 0 0 0 3px rgba(79,124,255,.16);
   }
 
   textarea {
     resize: vertical;
-    min-height: 64px;
-  }
-
-  .row {
-    display: flex;
-    gap: 10px;
-  }
-
-  .row > * {
-    flex: 1;
+    min-height: 70px;
   }
 
   .btn {
     width: 100%;
+    min-height: 54px;
     margin-top: 14px;
     padding: 15px;
     border: 0;
-    border-radius: 16px;
+    border-radius: 18px;
     background: var(--button);
     color: var(--button-text);
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .12s ease, opacity .15s ease;
+  }
+
+  .btn:active {
+    transform: scale(.98);
+    opacity: .9;
   }
 
   .btn.secondary {
     background: var(--bg);
     color: var(--text);
-    border: 1px solid var(--hint);
+    border: 1px solid rgba(120,120,128,.22);
   }
 
   .btn.danger {
-    background: #c62828;
-    color: #fff;
+    background: rgba(240,68,56,.12);
+    color: var(--red);
   }
 
   .tabs-main {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     display: flex;
+    gap: 6px;
     background: var(--card);
-    border-top: 1px solid rgba(128,128,128,.18);
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
-    z-index: 20;
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 8px;
+    z-index: 30;
   }
 
   .tab-main {
     flex: 1;
     text-align: center;
-    padding: 10px 4px;
-    border-radius: 14px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 9px 4px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 700;
     color: var(--hint);
     cursor: pointer;
+    transition: background .15s ease, color .15s ease;
   }
 
   .tab-main.active {
@@ -160,80 +245,114 @@
 
   .tab-main span {
     display: block;
-    font-size: 20px;
+    font-size: 21px;
     margin-bottom: 2px;
   }
 
   .page {
     display: none;
+    animation: fadeIn .18s ease;
   }
 
   .page.active {
     display: block;
   }
 
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .type-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 4px;
+    background: var(--bg);
+    padding: 6px;
+    border-radius: 18px;
+    margin-bottom: 6px;
   }
 
   .type-tab {
     flex: 1;
     text-align: center;
-    padding: 12px;
+    padding: 13px;
     border-radius: 14px;
-    background: var(--bg);
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
+    color: var(--hint);
+    transition: all .15s ease;
   }
 
-  .type-tab.active {
-    background: var(--button);
-    color: var(--button-text);
+  .type-tab.active-expense {
+    background: rgba(240,68,56,.14);
+    color: var(--red);
   }
 
-  .draft-item {
-    background: var(--bg);
-    border-radius: 14px;
-    padding: 12px;
-    margin-bottom: 10px;
-  }
-
-  .draft-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    font-weight: 700;
+  .type-tab.active-income {
+    background: rgba(18,183,106,.14);
+    color: var(--green);
   }
 
   .muted {
     color: var(--hint);
     font-size: 12px;
-    margin-top: 3px;
+    margin-top: 5px;
   }
 
   .stat-row {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
-    padding: 11px 0;
-    border-bottom: 1px solid rgba(128,128,128,.18);
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(120,120,128,.14);
   }
 
   .stat-row:last-child {
     border-bottom: 0;
   }
 
+  .stat-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .stat-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: var(--bg);
+    font-size: 18px;
+  }
+
+  .progress {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 999px;
+    margin-top: 7px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4f7cff, #8b5cf6);
+  }
+
   .amount {
     white-space: nowrap;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   .empty {
     color: var(--hint);
     text-align: center;
-    padding: 14px 0;
+    padding: 18px 0;
     font-size: 14px;
   }
 
@@ -243,22 +362,24 @@
   }
 
   .history-filters {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .history-filters select {
+    min-height: 48px;
     font-size: 14px;
-    padding: 11px;
   }
 
   .op-row {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
-    padding: 11px 0;
-    border-bottom: 1px solid rgba(128,128,128,.18);
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(120,120,128,.14);
   }
 
   .op-row:last-child {
@@ -266,7 +387,7 @@
   }
 
   .op-title {
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .op-comment {
@@ -275,61 +396,82 @@
     margin-top: 3px;
   }
 
+  .delete-btn {
+    border: 0;
+    background: rgba(240,68,56,.1);
+    color: var(--red);
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
   @media (max-width: 360px) {
-    .app { padding: 12px 10px 0; }
-    .big-balance { font-size: 25px; }
-    input, select, textarea { font-size: 15px; }
+    .hero { padding: 18px 14px 68px; }
+    .balance-card { margin: -48px 10px 14px; }
+    .app { padding: 0 10px; }
+    .balance-value { font-size: 27px; }
   }
 </style>
 </head>
 <body>
 
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="hero-title">Мой бюджет 💰</div>
+      <div class="hero-sub">Пополнения, расходы и статистика</div>
+    </div>
+    <div class="hero-icon">📊</div>
+  </div>
+</div>
+
+<div class="balance-card">
+  <div class="balance-label">Доступно сейчас</div>
+  <div class="balance-value" id="balanceBig">0 ₽</div>
+
+  <div class="mini-stats">
+    <div class="mini-stat">
+      <div class="mini-stat-title">📈 Пополнения</div>
+      <div class="mini-stat-value green" id="incomeTotal">0 ₽</div>
+    </div>
+
+    <div class="mini-stat">
+      <div class="mini-stat-title">📉 Расходы</div>
+      <div class="mini-stat-value red" id="expenseTotal">0 ₽</div>
+    </div>
+  </div>
+</div>
+
 <div class="app">
 
   <!-- ГЛАВНАЯ -->
   <div class="page active" id="page-dashboard">
-    <h1>Мой бюджет</h1>
 
     <div class="card">
-      <div class="balance-row">
-        <span>Доходы</span>
-        <b id="incomeTotal" class="green">0 ₽</b>
-      </div>
-
-      <div class="balance-row">
-        <span>Расходы</span>
-        <b id="expenseTotal" class="red">0 ₽</b>
-      </div>
-
-      <div class="balance-row">
-        <span>Остаток</span>
-        <b id="balanceTotal">0 ₽</b>
-      </div>
-
-      <div class="big-balance" id="balanceBig">0 ₽</div>
-    </div>
-
-    <div class="card">
-      <h3>Общая диаграмма</h3>
+      <div class="card-title">🥧 Общая диаграмма</div>
       <div class="chart-wrap">
         <canvas id="mainChart"></canvas>
       </div>
     </div>
 
     <div class="card">
-      <h3>Последние операции</h3>
+      <div class="card-title">🕘 Последние операции</div>
       <div id="recentOperations"></div>
     </div>
+
   </div>
 
   <!-- ДОБАВИТЬ -->
   <div class="page" id="page-add">
-    <h1>Добавить операцию</h1>
 
     <div class="card">
+      <div class="card-title">➕ Новая операция</div>
+
       <div class="type-tabs">
-        <div class="type-tab active" data-type="expense">Расход</div>
-        <div class="type-tab" data-type="income">Доход</div>
+        <div class="type-tab active-expense" data-type="expense">💸 Расход</div>
+        <div class="type-tab" data-type="income">💰 Пополнение</div>
       </div>
 
       <label>Категория</label>
@@ -341,40 +483,57 @@
       <label>Комментарий</label>
       <textarea id="comment" placeholder="Например: продукты в Пятёрочке"></textarea>
 
-      <button class="btn" onclick="addToDraft()">Добавить в черновик</button>
-      <button class="btn secondary" onclick="clearForm()">Очистить форму</button>
+      <button class="btn" onclick="saveOperation()">
+        💾 Сохранить операцию
+      </button>
+
+      <button class="btn secondary" onclick="clearForm()">
+        🧹 Очистить форму
+      </button>
     </div>
 
+  </div>
+
+  <!-- ИСТОРИЯ -->
+  <div class="page" id="page-history">
+
     <div class="card">
-      <h3>Черновик</h3>
-      <div id="draftList"></div>
-      <button class="btn" onclick="saveAllDrafts()">Сохранить всё одной кнопкой</button>
+      <div class="card-title">📚 История операций</div>
+
+      <div class="history-filters">
+        <select id="filterType" onchange="renderHistory()">
+          <option value="">Все операции</option>
+          <option value="income">Только пополнения</option>
+          <option value="expense">Только расходы</option>
+        </select>
+
+        <select id="filterCategory" onchange="renderHistory()">
+          <option value="">Все категории</option>
+        </select>
+      </div>
+
+      <div id="historyOperations"></div>
     </div>
+
   </div>
 
   <!-- СТАТИСТИКА -->
   <div class="page" id="page-stats">
-    <h1>Статистика</h1>
 
     <div class="card">
-      <h3>Расходы по категориям</h3>
+      <div class="card-title">📉 Расходы по категориям</div>
       <div id="expenseStats"></div>
     </div>
 
     <div class="card">
-      <h3>Доходы по категориям</h3>
+      <div class="card-title">📈 Пополнения по категориям</div>
       <div id="incomeStats"></div>
     </div>
 
-    <div class="card">
-      <h3>Все операции</h3>
-      <div id="allOperations"></div>
-    </div>
   </div>
 
 </div>
 
-<!-- НИЖНЕЕ МЕНЮ -->
 <div class="tabs-main">
   <div class="tab-main active" data-page="page-dashboard">
     <span>🏠</span>
@@ -386,6 +545,11 @@
     Добавить
   </div>
 
+  <div class="tab-main" data-page="page-history">
+    <span>📚</span>
+    История
+  </div>
+
   <div class="tab-main" data-page="page-stats">
     <span>📊</span>
     Статистика
@@ -394,32 +558,85 @@
 
 <script>
 const tg = window.Telegram.WebApp;
+tg.ready();
 tg.expand();
-tg.setHeaderColor?.("bg_color");
-tg.setBackgroundColor?.("bg_color");
+tg.setHeaderColor?.("secondary_bg_color");
+tg.setBackgroundColor?.("secondary_bg_color");
 
-const OPERATIONS_KEY = "my_finance_operations_v1";
-const DRAFT_KEY = "my_finance_draft_v1";
+const OPERATIONS_KEY = "my_finance_operations_v3";
 
 const expenseCategories = [
-  "Продукты", "Кафе и рестораны", "Доставка еды", "Жильё и аренда",
-  "Коммунальные услуги", "Интернет и связь", "Мобильная связь",
-  "Транспорт", "Бензин", "Такси", "Авто: обслуживание", "Авто: страховка",
-  "Одежда", "Обувь", "Красота и уход", "Парикмахерская", "Косметика",
-  "Здоровье", "Лекарства", "Стоматология", "Спорт и фитнес",
-  "Образование", "Курсы", "Подарки", "Цветы", "Развлечения",
-  "Кино", "Концерты", "Игры", "Путешествия", "Отпуск", "Отели",
-  "Билеты", "Подписки", "Техника", "Электроника", "Дом и ремонт",
-  "Мебель", "Бытовая техника", "Хозяйственные товары", "Питомцы",
-  "Кредиты", "Рассрочка", "Налоги", "Страхование", "Сбережения",
-  "Инвестиции", "Благотворительность", "Прочее"
+  { name: "Продукты", icon: "🛒" },
+  { name: "Кафе и рестораны", icon: "🍽️" },
+  { name: "Доставка еды", icon: "🛵" },
+  { name: "Жильё и аренда", icon: "🏠" },
+  { name: "Коммунальные услуги", icon: "💡" },
+  { name: "Интернет и связь", icon: "🌐" },
+  { name: "Мобильная связь", icon: "📱" },
+  { name: "Транспорт", icon: "🚌" },
+  { name: "Бензин", icon: "⛽" },
+  { name: "Такси", icon: "🚕" },
+  { name: "Авто: обслуживание", icon: "🔧" },
+  { name: "Авто: страховка", icon: "🛡️" },
+  { name: "Одежда", icon: "👕" },
+  { name: "Обувь", icon: "👟" },
+  { name: "Красота и уход", icon: "💅" },
+  { name: "Парикмахерская", icon: "💈" },
+  { name: "Косметика", icon: "💄" },
+  { name: "Здоровье", icon: "🩺" },
+  { name: "Лекарства", icon: "💊" },
+  { name: "Стоматология", icon: "🦷" },
+  { name: "Спорт и фитнес", icon: "🏋️" },
+  { name: "Образование", icon: "🎓" },
+  { name: "Курсы", icon: "📚" },
+  { name: "Подарки", icon: "🎁" },
+  { name: "Цветы", icon: "💐" },
+  { name: "Развлечения", icon: "🎉" },
+  { name: "Кино", icon: "🎬" },
+  { name: "Концерты", icon: "🎤" },
+  { name: "Игры", icon: "🎮" },
+  { name: "Путешествия", icon: "✈️" },
+  { name: "Отпуск", icon: "🏖️" },
+  { name: "Отели", icon: "🏨" },
+  { name: "Билеты", icon: "🎫" },
+  { name: "Подписки", icon: "🔁" },
+  { name: "Техника", icon: "💻" },
+  { name: "Электроника", icon: "🔌" },
+  { name: "Дом и ремонт", icon: "🛠️" },
+  { name: "Мебель", icon: "🛋️" },
+  { name: "Бытовая техника", icon: "🧺" },
+  { name: "Хозяйственные товары", icon: "🧽" },
+  { name: "Питомцы", icon: "🐾" },
+  { name: "Кредиты", icon: "🏦" },
+  { name: "Рассрочка", icon: "💳" },
+  { name: "Налоги", icon: "🧾" },
+  { name: "Страхование", icon: "📜" },
+  { name: "Сбережения", icon: "🐖" },
+  { name: "Инвестиции", icon: "📈" },
+  { name: "Благотворительность", icon: "❤️" },
+  { name: "Прочее", icon: "📦" }
 ];
 
 const incomeCategories = [
-  "Зарплата", "Аванс", "Премия", "Подработка", "Фриланс", "Бизнес",
-  "Продажа вещей", "Аренда", "Проценты по вкладу", "Дивиденды",
-  "Инвестиции", "Кэшбэк", "Подарки", "Возврат налога",
-  "Социальные выплаты", "Пособия", "Стипендия", "Пенсия", "Прочий доход"
+  { name: "Зарплата", icon: "💼" },
+  { name: "Аванс", icon: "💵" },
+  { name: "Премия", icon: "🏆" },
+  { name: "Подработка", icon: "🧰" },
+  { name: "Фриланс", icon: "🖥️" },
+  { name: "Бизнес", icon: "🏢" },
+  { name: "Продажа вещей", icon: "🏷️" },
+  { name: "Аренда", icon: "🔑" },
+  { name: "Проценты по вкладу", icon: "🏦" },
+  { name: "Дивиденды", icon: "📊" },
+  { name: "Инвестиции", icon: "📈" },
+  { name: "Кэшбэк", icon: "💳" },
+  { name: "Подарки", icon: "🎁" },
+  { name: "Возврат налога", icon: "🧾" },
+  { name: "Социальные выплаты", icon: "🤝" },
+  { name: "Пособия", icon: "👶" },
+  { name: "Стипендия", icon: "🎓" },
+  { name: "Пенсия", icon: "👵" },
+  { name: "Прочий доход", icon: "✨" }
 ];
 
 let currentType = "expense";
@@ -427,7 +644,8 @@ let mainChart = null;
 
 function getOperations() {
   try {
-    return JSON.parse(localStorage.getItem(OPERATIONS_KEY)) || [];
+    const parsed = JSON.parse(localStorage.getItem(OPERATIONS_KEY));
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
@@ -437,16 +655,12 @@ function saveOperations(list) {
   localStorage.setItem(OPERATIONS_KEY, JSON.stringify(list));
 }
 
-function getDraft() {
-  try {
-    return JSON.parse(localStorage.getItem(DRAFT_KEY)) || [];
-  } catch {
-    return [];
-  }
-}
-
-function saveDraft(list) {
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(list));
+function getCategory(categoryName) {
+  return (
+    expenseCategories.find(item => item.name === categoryName) ||
+    incomeCategories.find(item => item.name === categoryName) ||
+    { name: categoryName, icon: "📦" }
+  );
 }
 
 function money(value) {
@@ -460,17 +674,37 @@ function fillCategories() {
   const select = document.getElementById("category");
   const list = currentType === "expense" ? expenseCategories : incomeCategories;
 
-  select.innerHTML = list.map(category => {
-    return `<option value="${category}">${category}</option>`;
+  select.innerHTML = list.map(item => {
+    return `<option value="${item.name}">${item.icon} ${item.name}</option>`;
   }).join("");
+}
+
+function fillHistoryCategories() {
+  const select = document.getElementById("filterCategory");
+  const selected = select.value;
+  const allCategories = [...expenseCategories, ...incomeCategories];
+
+  select.innerHTML = `<option value="">Все категории</option>` + allCategories.map(item => {
+    return `<option value="${item.name}">${item.icon} ${item.name}</option>`;
+  }).join("");
+
+  select.value = selected;
 }
 
 document.querySelectorAll(".type-tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".type-tab").forEach(item => item.classList.remove("active"));
-    tab.classList.add("active");
+    document.querySelectorAll(".type-tab").forEach(item => {
+      item.classList.remove("active-expense", "active-income");
+    });
+
+    tab.classList.add(
+      tab.dataset.type === "expense" ? "active-expense" : "active-income"
+    );
+
     currentType = tab.dataset.type;
     fillCategories();
+
+    tg.HapticFeedback?.selectionChanged();
   });
 });
 
@@ -483,6 +717,7 @@ document.querySelectorAll(".tab-main").forEach(tab => {
     document.getElementById(tab.dataset.page).classList.add("active");
 
     window.scrollTo({ top: 0, behavior: "smooth" });
+    tg.HapticFeedback?.selectionChanged();
   });
 });
 
@@ -491,19 +726,26 @@ function clearForm() {
   document.getElementById("comment").value = "";
 }
 
-function addToDraft() {
+function saveOperation() {
   const category = document.getElementById("category").value;
   const amount = parseFloat(document.getElementById("amount").value);
   const comment = document.getElementById("comment").value.trim();
 
+  if (!category) {
+    tg.HapticFeedback?.notificationOccurred("error");
+    tg.showAlert("Выберите категорию");
+    return;
+  }
+
   if (!amount || amount <= 0) {
+    tg.HapticFeedback?.notificationOccurred("error");
     tg.showAlert("Введите сумму больше нуля");
     return;
   }
 
-  const draft = getDraft();
+  const operations = getOperations();
 
-  draft.unshift({
+  operations.unshift({
     id: Date.now() + Math.random(),
     type: currentType,
     category,
@@ -512,68 +754,24 @@ function addToDraft() {
     created_at: new Date().toISOString()
   });
 
-  saveDraft(draft);
+  saveOperations(operations);
   clearForm();
-  renderDraft();
-
-  tg.HapticFeedback?.impactOccurred("medium");
-  tg.showAlert("Добавлено в черновик");
-}
-
-function removeFromDraft(id) {
-  saveDraft(getDraft().filter(item => item.id !== id));
-  renderDraft();
-}
-
-function renderDraft() {
-  const draft = getDraft();
-  const container = document.getElementById("draftList");
-
-  if (!draft.length) {
-    container.innerHTML = `<div class="empty">Черновик пуст</div>`;
-    return;
-  }
-
-  container.innerHTML = draft.map(item => {
-    const label = item.type === "income" ? "Доход" : "Расход";
-
-    return `
-      <div class="draft-item">
-        <div class="draft-top">
-          <div>${label} · ${item.category}</div>
-          <div class="amount ${item.type === "income" ? "green" : "red"}">
-            ${money(item.amount)}
-          </div>
-        </div>
-
-        <div class="muted">${item.comment || "Без комментария"}</div>
-
-        <button class="btn danger" style="margin-top:10px" onclick="removeFromDraft(${item.id})">
-          Удалить
-        </button>
-      </div>
-    `;
-  }).join("");
-}
-
-function saveAllDrafts() {
-  const draft = getDraft();
-
-  if (!draft.length) {
-    tg.showAlert("Черновик пуст");
-    return;
-  }
-
-  const operations = getOperations();
-  const saved = [...draft, ...operations];
-
-  saveOperations(saved);
-  saveDraft([]);
-  renderDraft();
   renderAll();
 
   tg.HapticFeedback?.notificationOccurred("success");
-  tg.showAlert(`Сохранено операций: ${draft.length}`);
+  tg.showAlert(
+    currentType === "income"
+      ? "Пополнение сохранено ✅"
+      : "Расход сохранён ✅"
+  );
+}
+
+function deleteOperation(id) {
+  const operations = getOperations().filter(operation => operation.id !== id);
+  saveOperations(operations);
+  renderAll();
+
+  tg.HapticFeedback?.impactOccurred("light");
 }
 
 function calculateCategoryStats(operations, type) {
@@ -607,19 +805,34 @@ function renderStats(containerId, items) {
   const container = document.getElementById(containerId);
 
   if (!items.length) {
-    container.innerHTML = `<div class="empty">Пока нет данных</div>`;
+    container.innerHTML = `<div class="empty">Пока нет данных 📭</div>`;
     return;
   }
 
-  container.innerHTML = items.map(item => `
-    <div class="stat-row">
-      <div>
-        <div>${item.category}</div>
-        <div class="muted">${item.count} операций · ${item.share}%</div>
+  const max = items[0].total;
+
+  container.innerHTML = items.map(item => {
+    const category = getCategory(item.category);
+
+    return `
+      <div class="stat-row">
+        <div style="flex:1">
+          <div class="stat-name">
+            <div class="stat-icon">${category.icon}</div>
+            <div>
+              ${category.name}
+              <div class="muted">${item.count} операций · ${item.share}%</div>
+              <div class="progress">
+                <div class="progress-bar" style="width:${Math.round(item.total / max * 100)}%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="amount">${money(item.total)}</div>
       </div>
-      <div class="amount">${money(item.total)}</div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function renderChart(operations) {
@@ -627,8 +840,8 @@ function renderChart(operations) {
   const incomeStats = calculateCategoryStats(operations, "income");
 
   const labels = [
-    ...expenseStats.map(item => "Расход: " + item.category),
-    ...incomeStats.map(item => "Доход: " + item.category)
+    ...expenseStats.map(item => getCategory(item.category).icon + " " + item.category),
+    ...incomeStats.map(item => getCategory(item.category).icon + " " + item.category)
   ];
 
   const values = [
@@ -637,9 +850,9 @@ function renderChart(operations) {
   ];
 
   const colors = [
-    "#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff",
-    "#ff9f40", "#8ac24a", "#ea5532", "#00acc1", "#5c6bc0",
-    "#d81b60", "#43a047", "#fb8c00", "#3949ab", "#00897b"
+    "#f04438", "#4f7cff", "#f79009", "#12b76a", "#8b5cf6",
+    "#00b5d8", "#f63d68", "#84cc16", "#f59e0b", "#6366f1",
+    "#ec4899", "#14b8a6", "#f97316", "#3b82f6", "#22c55e"
   ];
 
   const context = document.getElementById("mainChart");
@@ -655,18 +868,20 @@ function renderChart(operations) {
       datasets: [{
         data: values,
         backgroundColor: labels.map((_, index) => colors[index % colors.length]),
-        borderWidth: 0
+        borderWidth: 0,
+        hoverOffset: 8
       }]
     },
     options: {
+      cutout: "62%",
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
           position: "bottom",
           labels: {
-            boxWidth: 12,
-            padding: 8,
+            boxWidth: 10,
+            padding: 9,
             font: { size: 11 }
           }
         }
@@ -678,36 +893,59 @@ function renderChart(operations) {
 function formatDate(value) {
   const date = new Date(value);
 
-  return date.toLocaleDateString("ru-RU") + " " +
+  return date.toLocaleDateString("ru-RU") + ", " +
     date.toLocaleTimeString("ru-RU", {
       hour: "2-digit",
       minute: "2-digit"
     });
 }
 
-function renderHistory(containerId, operations, limit = null) {
-  const container = document.getElementById(containerId);
-  const list = limit ? operations.slice(0, limit) : operations;
+function operationRow(operation, canDelete = false) {
+  const category = getCategory(operation.category);
 
-  if (!list.length) {
-    container.innerHTML = `<div class="empty">Операций пока нет</div>`;
-    return;
-  }
-
-  container.innerHTML = list.map(operation => `
+  return `
     <div class="op-row">
-      <div>
-        <div class="op-title">${operation.category}</div>
-        <div class="op-comment">
-          ${operation.comment || "Без комментария"} · ${formatDate(operation.created_at)}
+      <div style="display:flex;align-items:center;gap:11px;flex:1">
+        <div class="stat-icon">${category.icon}</div>
+
+        <div>
+          <div class="op-title">${category.name}</div>
+          <div class="op-comment">
+            ${operation.comment || "Без комментария"} · ${formatDate(operation.created_at)}
+          </div>
         </div>
       </div>
 
-      <div class="amount ${operation.type === "income" ? "green" : "red"}">
-        ${operation.type === "income" ? "+" : "−"}${money(operation.amount)}
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="amount ${operation.type === "income" ? "green" : "red"}">
+          ${operation.type === "income" ? "+" : "−"}${money(operation.amount)}
+        </div>
+
+        ${canDelete ? `
+          <button class="delete-btn" onclick="deleteOperation(${operation.id})">
+            🗑️
+          </button>
+        ` : ""}
       </div>
     </div>
-  `).join("");
+  `;
+}
+
+function renderHistory() {
+  const operations = getOperations();
+  const typeFilter = document.getElementById("filterType").value;
+  const categoryFilter = document.getElementById("filterCategory").value;
+
+  const filtered = operations.filter(operation => {
+    return (!typeFilter || operation.type === typeFilter) &&
+           (!categoryFilter || operation.category === categoryFilter);
+  });
+
+  const container = document.getElementById("historyOperations");
+
+  container.innerHTML = filtered.length
+    ? filtered.map(operation => operationRow(operation, true)).join("")
+    : `<div class="empty">Операций не найдено 📭</div>`;
 }
 
 function renderAll() {
@@ -725,21 +963,23 @@ function renderAll() {
 
   document.getElementById("incomeTotal").textContent = money(incomeTotal);
   document.getElementById("expenseTotal").textContent = money(expenseTotal);
-  document.getElementById("balanceTotal").textContent = money(balance);
 
   const balanceBig = document.getElementById("balanceBig");
   balanceBig.textContent = money(balance);
-  balanceBig.className = "big-balance " + (balance >= 0 ? "green" : "red");
+  balanceBig.style.color = balance >= 0 ? "var(--green)" : "var(--red)";
 
+  document.getElementById("recentOperations").innerHTML = operations.length
+    ? operations.slice(0, 10).map(operation => operationRow(operation)).join("")
+    : `<div class="empty">Операций пока нет 📭</div>`;
+
+  renderHistory();
   renderChart(operations);
-  renderHistory("recentOperations", operations, 10);
   renderStats("expenseStats", calculateCategoryStats(operations, "expense"));
   renderStats("incomeStats", calculateCategoryStats(operations, "income"));
-  renderHistory("allOperations", operations);
 }
 
 fillCategories();
-renderDraft();
+fillHistoryCategories();
 renderAll();
 </script>
 
