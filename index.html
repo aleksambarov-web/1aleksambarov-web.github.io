@@ -982,33 +982,19 @@
             renderAnalytics();
         }
 
+        // ИСПРАВЛЕНО - используем localStorage для синхронизации
         async function loadData() {
             return new Promise(resolve => {
-                tg.CloudStorage.getItems(['family_shared'], (err, result) => {
-                    if (err) {
-                        console.error('Ошибка загрузки:', err);
-                        transactions = [];
-                    } else {
-                        transactions = result['family_shared'] ? JSON.parse(result['family_shared']) : [];
-                        console.log('Загружено транзакций:', transactions.length);
-                    }
-                    resolve();
-                });
+                const stored = localStorage.getItem('family_finance_shared');
+                transactions = stored ? JSON.parse(stored) : [];
+                console.log('Загружено транзакций:', transactions.length);
+                resolve();
             });
         }
 
         async function saveData() {
-            return new Promise((resolve, reject) => {
-                tg.CloudStorage.setItem('family_shared', JSON.stringify(transactions), (err) => {
-                    if (err) {
-                        console.error('Ошибка сохранения:', err);
-                        reject(err);
-                    } else {
-                        console.log('Сохранено транзакций:', transactions.length);
-                        resolve();
-                    }
-                });
-            });
+            localStorage.setItem('family_finance_shared', JSON.stringify(transactions));
+            console.log('Сохранено транзакций:', transactions.length);
         }
 
         function saveTransaction() {
@@ -1299,85 +1285,4 @@
             const t = transactions[index];
             const userName = t.user === 'husband' ? '👨 Муж' : '👩 Жена';
             
-            document.getElementById('modalTitle').textContent = (t.type === 'income' ? '📥 Доход' : (t.type === 'expense' ? '📤 Расход' : '💰 Накопление'));
-            document.getElementById('modalDetails').innerHTML = `
-                <div style="margin-bottom: 16px;">
-                    <div style="font-size: 13px; color: #666; margin-bottom: 6px;">👤 Кто</div>
-                    <div style="font-size: 16px; font-weight: 700;">${userName}</div>
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <div style="font-size: 13px; color: #666; margin-bottom: 6px;">💵 Сумма</div>
-                    <div style="font-size: 24px; font-weight: 800; color: ${t.type === 'income' ? '#44aa44' : (t.type === 'expense' ? '#ff4444' : '#3390ec')};">${t.type === 'income' ? '+' : '-'}${t.amount.toLocaleString()} ₽</div>
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <div style="font-size: 13px; color: #666; margin-bottom: 6px;">📝 Описание</div>
-                    <div style="font-size: 16px; font-weight: 700;">${escapeHtml(t.description)}</div>
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <div style="font-size: 13px; color: #666; margin-bottom: 6px;">🏷️ Категория</div>
-                    <div style="font-size: 15px;">${t.category}</div>
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <div style="font-size: 13px; color: #666; margin-bottom: 6px;">📅 Дата</div>
-                    <div style="font-size: 15px;">${new Date(t.date).toLocaleDateString('ru-RU')}</div>
-                </div>
-                ${t.note ? `
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-size: 13px; color: #666; margin-bottom: 6px;">📝 Примечание</div>
-                        <div style="font-size: 15px; color: #555;">${escapeHtml(t.note)}</div>
-                    </div>
-                ` : ''}
-            `;
-            
-            document.getElementById('transactionModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('transactionModal').classList.remove('active');
-            currentTransactionIndex = null;
-        }
-
-        function deleteTransaction(index = currentTransactionIndex) {
-            if (index === null) return;
-            
-            tg.showConfirm('🗑️ Удалить?', async ok => {
-                if (ok) {
-                    transactions.splice(index, 1);
-                    await saveData();
-                    closeModal();
-                    if (transactions[index]?.type === 'saving') {
-                        renderSavings();
-                    } else {
-                        renderTransactions();
-                    }
-                    tg.showAlert('✅ Удалено!');
-                }
-            });
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        document.addEventListener('click', e => {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const btn = document.querySelector('.mobile-menu-btn');
-                if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
-                    closeSidebar();
-                }
-            }
-        });
-
-        document.getElementById('date').valueAsDate = new Date();
-
-        (async () => {
-            await loadData();
-            setType('income');
-            renderDashboard();
-        })();
-    </script>
-</body>
-</html>
+            document.getElementById('modalTitle').textContent
