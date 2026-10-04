@@ -2,10 +2,12 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Семейный бюджет</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Мой бюджет</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
   :root {
     --bg: var(--tg-theme-bg-color, #ffffff);
@@ -14,25 +16,44 @@
     --hint: var(--tg-theme-hint-color, #8e8e93);
     --button: var(--tg-theme-button-color, #2481cc);
     --button-text: var(--tg-theme-button-text-color, #ffffff);
+    --green: #2e7d32;
+    --red: #c62828;
   }
 
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-  body {
+  html, body {
     margin: 0;
-    padding: 14px;
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding-bottom: 40px;
   }
 
-  h1 { font-size: 22px; margin: 4px 0 16px; }
-  h3 { margin: 0 0 12px; font-size: 17px; }
+  body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    min-height: 100vh;
+  }
+
+  .app {
+    padding: 14px 14px 0;
+  }
+
+  h1 {
+    font-size: 22px;
+    margin: 4px 0 14px;
+  }
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: 17px;
+  }
 
   .card {
     background: var(--card);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 14px;
     margin-bottom: 14px;
   }
@@ -45,9 +66,14 @@
     font-size: 15px;
   }
 
-  .total { font-size: 26px; font-weight: 800; margin-top: 4px; }
-  .green { color: #2e7d32; }
-  .red { color: #c62828; }
+  .big-balance {
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 6px;
+  }
+
+  .green { color: var(--green); }
+  .red { color: var(--red); }
 
   label {
     display: block;
@@ -58,8 +84,8 @@
 
   input, select, textarea {
     width: 100%;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 14px;
     border: 1px solid var(--hint);
     background: var(--bg);
     color: var(--text);
@@ -67,51 +93,119 @@
     outline: none;
   }
 
-  textarea { resize: vertical; min-height: 60px; }
+  textarea {
+    resize: vertical;
+    min-height: 64px;
+  }
 
-  .tabs {
+  .row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 10px;
   }
 
-  .tab {
+  .row > * {
     flex: 1;
-    text-align: center;
-    padding: 11px;
-    border-radius: 12px;
-    background: var(--bg);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 15px;
-  }
-
-  .tab.active {
-    background: var(--button);
-    color: var(--button-text);
   }
 
   .btn {
     width: 100%;
-    margin-top: 16px;
-    padding: 14px;
+    margin-top: 14px;
+    padding: 15px;
     border: 0;
-    border-radius: 14px;
+    border-radius: 16px;
     background: var(--button);
     color: var(--button-text);
     font-size: 16px;
     font-weight: 700;
   }
 
-  .stat-row {
+  .btn.secondary {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--hint);
+  }
+
+  .btn.danger {
+    background: #c62828;
+    color: #fff;
+  }
+
+  .tabs-main {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    background: var(--card);
+    border-top: 1px solid rgba(128,128,128,.18);
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+    z-index: 20;
+  }
+
+  .tab-main {
+    flex: 1;
+    text-align: center;
+    padding: 10px 4px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hint);
+    cursor: pointer;
+  }
+
+  .tab-main.active {
+    background: var(--button);
+    color: var(--button-text);
+  }
+
+  .tab-main span {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+
+  .page {
+    display: none;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  .type-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .type-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--bg);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .type-tab.active {
+    background: var(--button);
+    color: var(--button-text);
+  }
+
+  .draft-item {
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .draft-top {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(128,128,128,.18);
+    font-weight: 700;
   }
-
-  .stat-row:last-child { border-bottom: 0; }
 
   .muted {
     color: var(--hint);
@@ -119,114 +213,183 @@
     margin-top: 3px;
   }
 
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(128,128,128,.18);
+  }
+
+  .stat-row:last-child {
+    border-bottom: 0;
+  }
+
+  .amount {
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
   .empty {
     color: var(--hint);
-    font-size: 14px;
     text-align: center;
-    padding: 12px 0;
+    padding: 14px 0;
+    font-size: 14px;
   }
 
   .chart-wrap {
     position: relative;
-    height: 280px;
+    height: 300px;
+  }
+
+  .history-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .history-filters select {
+    font-size: 14px;
+    padding: 11px;
   }
 
   .op-row {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    padding: 10px 0;
+    padding: 11px 0;
     border-bottom: 1px solid rgba(128,128,128,.18);
   }
 
-  .op-row:last-child { border-bottom: 0; }
-
-  .amount { white-space: nowrap; font-weight: 700; }
-
-  .filters {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
+  .op-row:last-child {
+    border-bottom: 0;
   }
 
-  .filters select { font-size: 14px; padding: 9px; }
+  .op-title {
+    font-weight: 600;
+  }
+
+  .op-comment {
+    color: var(--hint);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  @media (max-width: 360px) {
+    .app { padding: 12px 10px 0; }
+    .big-balance { font-size: 25px; }
+    input, select, textarea { font-size: 15px; }
+  }
 </style>
 </head>
 <body>
 
-<h1>Семейный бюджет</h1>
+<div class="app">
 
-<div class="card">
-  <div class="balance-row"><span>Доходы</span><b id="incomeTotal" class="green">0 ₽</b></div>
-  <div class="balance-row"><span>Расходы</span><b id="expenseTotal" class="red">0 ₽</b></div>
-  <div class="balance-row"><span>Остаток</span><b id="balanceTotal">0 ₽</b></div>
-  <div class="total" id="balanceBig">0 ₽</div>
-</div>
+  <!-- ГЛАВНАЯ -->
+  <div class="page active" id="page-dashboard">
+    <h1>Мой бюджет</h1>
 
-<div class="card">
-  <div class="tabs">
-    <div class="tab active" data-type="expense">Расход</div>
-    <div class="tab" data-type="income">Доход</div>
+    <div class="card">
+      <div class="balance-row">
+        <span>Доходы</span>
+        <b id="incomeTotal" class="green">0 ₽</b>
+      </div>
+
+      <div class="balance-row">
+        <span>Расходы</span>
+        <b id="expenseTotal" class="red">0 ₽</b>
+      </div>
+
+      <div class="balance-row">
+        <span>Остаток</span>
+        <b id="balanceTotal">0 ₽</b>
+      </div>
+
+      <div class="big-balance" id="balanceBig">0 ₽</div>
+    </div>
+
+    <div class="card">
+      <h3>Общая диаграмма</h3>
+      <div class="chart-wrap">
+        <canvas id="mainChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Последние операции</h3>
+      <div id="recentOperations"></div>
+    </div>
   </div>
 
-  <label>Кто добавил</label>
-  <select id="member">
-    <option value="Муж">Муж</option>
-    <option value="Жена">Жена</option>
-  </select>
+  <!-- ДОБАВИТЬ -->
+  <div class="page" id="page-add">
+    <h1>Добавить операцию</h1>
 
-  <label>Категория</label>
-  <select id="category"></select>
+    <div class="card">
+      <div class="type-tabs">
+        <div class="type-tab active" data-type="expense">Расход</div>
+        <div class="type-tab" data-type="income">Доход</div>
+      </div>
 
-  <label>Сумма, ₽</label>
-  <input id="amount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="Например, 1500">
+      <label>Категория</label>
+      <select id="category"></select>
 
-  <label>Комментарий</label>
-  <textarea id="comment" placeholder="Например: продукты в Пятёрочке"></textarea>
+      <label>Сумма, ₽</label>
+      <input id="amount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="Например, 1500">
 
-  <button class="btn" onclick="saveOperation()">Добавить</button>
-</div>
+      <label>Комментарий</label>
+      <textarea id="comment" placeholder="Например: продукты в Пятёрочке"></textarea>
 
-<div class="card">
-  <h3>Общая диаграмма</h3>
-  <div class="chart-wrap">
-    <canvas id="mainChart"></canvas>
-  </div>
-</div>
+      <button class="btn" onclick="addToDraft()">Добавить в черновик</button>
+      <button class="btn secondary" onclick="clearForm()">Очистить форму</button>
+    </div>
 
-<div class="card">
-  <h3>Расходы по категориям</h3>
-  <div id="expenseStats"></div>
-</div>
-
-<div class="card">
-  <h3>Доходы по категориям</h3>
-  <div id="incomeStats"></div>
-</div>
-
-<div class="card">
-  <h3>По участникам</h3>
-  <div id="memberStats"></div>
-</div>
-
-<div class="card">
-  <h3>История операций</h3>
-
-  <div class="filters">
-    <select id="filterMember" onchange="renderHistory()">
-      <option value="">Все участники</option>
-      <option value="Муж">Муж</option>
-      <option value="Жена">Жена</option>
-    </select>
-
-    <select id="filterType" onchange="renderHistory()">
-      <option value="">Доходы и расходы</option>
-      <option value="income">Только доходы</option>
-      <option value="expense">Только расходы</option>
-    </select>
+    <div class="card">
+      <h3>Черновик</h3>
+      <div id="draftList"></div>
+      <button class="btn" onclick="saveAllDrafts()">Сохранить всё одной кнопкой</button>
+    </div>
   </div>
 
-  <div id="operations"></div>
+  <!-- СТАТИСТИКА -->
+  <div class="page" id="page-stats">
+    <h1>Статистика</h1>
+
+    <div class="card">
+      <h3>Расходы по категориям</h3>
+      <div id="expenseStats"></div>
+    </div>
+
+    <div class="card">
+      <h3>Доходы по категориям</h3>
+      <div id="incomeStats"></div>
+    </div>
+
+    <div class="card">
+      <h3>Все операции</h3>
+      <div id="allOperations"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- НИЖНЕЕ МЕНЮ -->
+<div class="tabs-main">
+  <div class="tab-main active" data-page="page-dashboard">
+    <span>🏠</span>
+    Главная
+  </div>
+
+  <div class="tab-main" data-page="page-add">
+    <span>➕</span>
+    Добавить
+  </div>
+
+  <div class="tab-main" data-page="page-stats">
+    <span>📊</span>
+    Статистика
+  </div>
 </div>
 
 <script>
@@ -235,7 +398,8 @@ tg.expand();
 tg.setHeaderColor?.("bg_color");
 tg.setBackgroundColor?.("bg_color");
 
-const STORAGE_KEY = "family_finance_operations_v1";
+const OPERATIONS_KEY = "my_finance_operations_v1";
+const DRAFT_KEY = "my_finance_draft_v1";
 
 const expenseCategories = [
   "Продукты", "Кафе и рестораны", "Доставка еды", "Жильё и аренда",
@@ -243,19 +407,18 @@ const expenseCategories = [
   "Транспорт", "Бензин", "Такси", "Авто: обслуживание", "Авто: страховка",
   "Одежда", "Обувь", "Красота и уход", "Парикмахерская", "Косметика",
   "Здоровье", "Лекарства", "Стоматология", "Спорт и фитнес",
-  "Образование", "Курсы", "Дети", "Детский сад", "Школа",
-  "Игрушки", "Детская одежда", "Подарки", "Цветы",
-  "Развлечения", "Кино", "Концерты", "Игры", "Путешествия", "Отпуск",
-  "Отели", "Билеты", "Подписки", "Техника", "Электроника",
-  "Дом и ремонт", "Мебель", "Бытовая техника", "Хозяйственные товары",
-  "Питомцы", "Кредиты", "Рассрочка", "Налоги", "Страхование",
-  "Сбережения", "Инвестиции", "Благотворительность", "Прочее"
+  "Образование", "Курсы", "Подарки", "Цветы", "Развлечения",
+  "Кино", "Концерты", "Игры", "Путешествия", "Отпуск", "Отели",
+  "Билеты", "Подписки", "Техника", "Электроника", "Дом и ремонт",
+  "Мебель", "Бытовая техника", "Хозяйственные товары", "Питомцы",
+  "Кредиты", "Рассрочка", "Налоги", "Страхование", "Сбережения",
+  "Инвестиции", "Благотворительность", "Прочее"
 ];
 
 const incomeCategories = [
-  "Зарплата мужа", "Зарплата жены", "Аванс", "Премия", "Подработка",
-  "Фриланс", "Бизнес", "Продажа вещей", "Аренда", "Проценты по вкладу",
-  "Дивиденды", "Инвестиции", "Кэшбэк", "Подарки", "Возврат налога",
+  "Зарплата", "Аванс", "Премия", "Подработка", "Фриланс", "Бизнес",
+  "Продажа вещей", "Аренда", "Проценты по вкладу", "Дивиденды",
+  "Инвестиции", "Кэшбэк", "Подарки", "Возврат налога",
   "Социальные выплаты", "Пособия", "Стипендия", "Пенсия", "Прочий доход"
 ];
 
@@ -264,14 +427,26 @@ let mainChart = null;
 
 function getOperations() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    return JSON.parse(localStorage.getItem(OPERATIONS_KEY)) || [];
   } catch {
     return [];
   }
 }
 
 function saveOperations(list) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  localStorage.setItem(OPERATIONS_KEY, JSON.stringify(list));
+}
+
+function getDraft() {
+  try {
+    return JSON.parse(localStorage.getItem(DRAFT_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveDraft(list) {
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(list));
 }
 
 function money(value) {
@@ -285,22 +460,38 @@ function fillCategories() {
   const select = document.getElementById("category");
   const list = currentType === "expense" ? expenseCategories : incomeCategories;
 
-  select.innerHTML = list
-    .map(category => `<option value="${category}">${category}</option>`)
-    .join("");
+  select.innerHTML = list.map(category => {
+    return `<option value="${category}">${category}</option>`;
+  }).join("");
 }
 
-document.querySelectorAll(".tab").forEach(tab => {
+document.querySelectorAll(".type-tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+    document.querySelectorAll(".type-tab").forEach(item => item.classList.remove("active"));
     tab.classList.add("active");
     currentType = tab.dataset.type;
     fillCategories();
   });
 });
 
-function saveOperation() {
-  const member = document.getElementById("member").value;
+document.querySelectorAll(".tab-main").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab-main").forEach(item => item.classList.remove("active"));
+    tab.classList.add("active");
+
+    document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+    document.getElementById(tab.dataset.page).classList.add("active");
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
+
+function clearForm() {
+  document.getElementById("amount").value = "";
+  document.getElementById("comment").value = "";
+}
+
+function addToDraft() {
   const category = document.getElementById("category").value;
   const amount = parseFloat(document.getElementById("amount").value);
   const comment = document.getElementById("comment").value.trim();
@@ -310,11 +501,10 @@ function saveOperation() {
     return;
   }
 
-  const operations = getOperations();
+  const draft = getDraft();
 
-  operations.unshift({
-    id: Date.now(),
-    member,
+  draft.unshift({
+    id: Date.now() + Math.random(),
     type: currentType,
     category,
     amount,
@@ -322,15 +512,68 @@ function saveOperation() {
     created_at: new Date().toISOString()
   });
 
-  saveOperations(operations);
-
-  document.getElementById("amount").value = "";
-  document.getElementById("comment").value = "";
+  saveDraft(draft);
+  clearForm();
+  renderDraft();
 
   tg.HapticFeedback?.impactOccurred("medium");
-  tg.showAlert(currentType === "income" ? "Доход добавлен" : "Расход добавлен");
+  tg.showAlert("Добавлено в черновик");
+}
 
+function removeFromDraft(id) {
+  saveDraft(getDraft().filter(item => item.id !== id));
+  renderDraft();
+}
+
+function renderDraft() {
+  const draft = getDraft();
+  const container = document.getElementById("draftList");
+
+  if (!draft.length) {
+    container.innerHTML = `<div class="empty">Черновик пуст</div>`;
+    return;
+  }
+
+  container.innerHTML = draft.map(item => {
+    const label = item.type === "income" ? "Доход" : "Расход";
+
+    return `
+      <div class="draft-item">
+        <div class="draft-top">
+          <div>${label} · ${item.category}</div>
+          <div class="amount ${item.type === "income" ? "green" : "red"}">
+            ${money(item.amount)}
+          </div>
+        </div>
+
+        <div class="muted">${item.comment || "Без комментария"}</div>
+
+        <button class="btn danger" style="margin-top:10px" onclick="removeFromDraft(${item.id})">
+          Удалить
+        </button>
+      </div>
+    `;
+  }).join("");
+}
+
+function saveAllDrafts() {
+  const draft = getDraft();
+
+  if (!draft.length) {
+    tg.showAlert("Черновик пуст");
+    return;
+  }
+
+  const operations = getOperations();
+  const saved = [...draft, ...operations];
+
+  saveOperations(saved);
+  saveDraft([]);
+  renderDraft();
   renderAll();
+
+  tg.HapticFeedback?.notificationOccurred("success");
+  tg.showAlert(`Сохранено операций: ${draft.length}`);
 }
 
 function calculateCategoryStats(operations, type) {
@@ -379,33 +622,6 @@ function renderStats(containerId, items) {
   `).join("");
 }
 
-function renderMemberStats(operations) {
-  const container = document.getElementById("memberStats");
-  const members = ["Муж", "Жена"];
-
-  container.innerHTML = members.map(member => {
-    const income = operations
-      .filter(operation => operation.member === member && operation.type === "income")
-      .reduce((sum, operation) => sum + Number(operation.amount), 0);
-
-    const expense = operations
-      .filter(operation => operation.member === member && operation.type === "expense")
-      .reduce((sum, operation) => sum + Number(operation.amount), 0);
-
-    return `
-      <div class="stat-row">
-        <div>
-          <div>${member}</div>
-          <div class="muted">Доход: ${money(income)} · Расход: ${money(expense)}</div>
-        </div>
-        <div class="amount ${income - expense >= 0 ? "green" : "red"}">
-          ${money(income - expense)}
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
 function renderChart(operations) {
   const expenseStats = calculateCategoryStats(operations, "expense");
   const incomeStats = calculateCategoryStats(operations, "income");
@@ -450,7 +666,7 @@ function renderChart(operations) {
           position: "bottom",
           labels: {
             boxWidth: 12,
-            padding: 10,
+            padding: 8,
             font: { size: 11 }
           }
         }
@@ -459,42 +675,39 @@ function renderChart(operations) {
   });
 }
 
-function renderHistory() {
-  const operations = getOperations();
-  const memberFilter = document.getElementById("filterMember").value;
-  const typeFilter = document.getElementById("filterType").value;
+function formatDate(value) {
+  const date = new Date(value);
 
-  const filtered = operations.filter(operation => {
-    return (!memberFilter || operation.member === memberFilter) &&
-           (!typeFilter || operation.type === typeFilter);
-  });
+  return date.toLocaleDateString("ru-RU") + " " +
+    date.toLocaleTimeString("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+}
 
-  const container = document.getElementById("operations");
+function renderHistory(containerId, operations, limit = null) {
+  const container = document.getElementById(containerId);
+  const list = limit ? operations.slice(0, limit) : operations;
 
-  if (!filtered.length) {
+  if (!list.length) {
     container.innerHTML = `<div class="empty">Операций пока нет</div>`;
     return;
   }
 
-  container.innerHTML = filtered.slice(0, 50).map(operation => {
-    const date = new Date(operation.created_at);
-    const formattedDate = date.toLocaleDateString("ru-RU") + " " +
-      date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-
-    return `
-      <div class="op-row">
-        <div>
-          <div>${operation.category} · ${operation.member}</div>
-          <div class="muted">
-            ${operation.comment || "Без комментария"} · ${formattedDate}
-          </div>
-        </div>
-        <div class="amount ${operation.type === "income" ? "green" : "red"}">
-          ${operation.type === "income" ? "+" : "−"}${money(operation.amount)}
+  container.innerHTML = list.map(operation => `
+    <div class="op-row">
+      <div>
+        <div class="op-title">${operation.category}</div>
+        <div class="op-comment">
+          ${operation.comment || "Без комментария"} · ${formatDate(operation.created_at)}
         </div>
       </div>
-    `;
-  }).join("");
+
+      <div class="amount ${operation.type === "income" ? "green" : "red"}">
+        ${operation.type === "income" ? "+" : "−"}${money(operation.amount)}
+      </div>
+    </div>
+  `).join("");
 }
 
 function renderAll() {
@@ -513,17 +726,20 @@ function renderAll() {
   document.getElementById("incomeTotal").textContent = money(incomeTotal);
   document.getElementById("expenseTotal").textContent = money(expenseTotal);
   document.getElementById("balanceTotal").textContent = money(balance);
-  document.getElementById("balanceBig").textContent = money(balance);
-  document.getElementById("balanceBig").className = "total " + (balance >= 0 ? "green" : "red");
 
+  const balanceBig = document.getElementById("balanceBig");
+  balanceBig.textContent = money(balance);
+  balanceBig.className = "big-balance " + (balance >= 0 ? "green" : "red");
+
+  renderChart(operations);
+  renderHistory("recentOperations", operations, 10);
   renderStats("expenseStats", calculateCategoryStats(operations, "expense"));
   renderStats("incomeStats", calculateCategoryStats(operations, "income"));
-  renderMemberStats(operations);
-  renderChart(operations);
-  renderHistory();
+  renderHistory("allOperations", operations);
 }
 
 fillCategories();
+renderDraft();
 renderAll();
 </script>
 
