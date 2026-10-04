@@ -9,7 +9,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  :root {
+  :root,
+  :root[data-theme="light"] {
     --bg: #f4f6f8;
     --surface: #ffffff;
     --surface-2: #eef1f5;
@@ -28,24 +29,22 @@
     --radius: 18px;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121417;
-      --surface: #1b1f24;
-      --surface-2: #23282e;
-      --text: #f3f4f6;
-      --text-secondary: #d1d5db;
-      --muted: #9ca3af;
-      --border: #333a42;
-      --primary: #7ea8d4;
-      --primary-soft: #22303d;
-      --income: #7fc8a4;
-      --income-soft: #1e2b25;
-      --expense: #e39a86;
-      --expense-soft: #33241f;
-      --danger: #e08a80;
-      --shadow: 0 4px 16px rgba(0, 0, 0, .25);
-    }
+  :root[data-theme="dark"] {
+    --bg: #121417;
+    --surface: #1b1f24;
+    --surface-2: #23282e;
+    --text: #f3f4f6;
+    --text-secondary: #d1d5db;
+    --muted: #9ca3af;
+    --border: #333a42;
+    --primary: #7ea8d4;
+    --primary-soft: #22303d;
+    --income: #7fc8a4;
+    --income-soft: #1e2b25;
+    --expense: #e39a86;
+    --expense-soft: #33241f;
+    --danger: #e08a80;
+    --shadow: 0 4px 16px rgba(0, 0, 0, .25);
   }
 
   * {
@@ -593,11 +592,36 @@
 <script>
 "use strict";
 
-const tg = window.Telegram.WebApp;
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+
+function applyTheme() {
+  let scheme = "light";
+
+  try {
+    if (tg && (tg.colorScheme === "dark" || tg.colorScheme === "light")) {
+      scheme = tg.colorScheme;
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      scheme = "dark";
+    }
+  } catch {}
+
+  document.documentElement.dataset.theme = scheme;
+}
+
+applyTheme();
 
 try {
-  tg.ready();
-  tg.expand();
+  if (tg) {
+    tg.ready();
+    tg.expand();
+
+    if (tg.onEvent) {
+      tg.onEvent("themeChanged", () => {
+        applyTheme();
+        renderAll();
+      });
+    }
+  }
 } catch (error) {
   console.warn("Telegram WebApp API недоступен:", error);
 }
@@ -681,6 +705,12 @@ const incomeCategories = [
 let currentType = "expense";
 let mainChart = null;
 
+function cssVar(name) {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}
+
 function isValidOperation(operation) {
   return Boolean(
     operation &&
@@ -742,7 +772,11 @@ function money(value) {
 
 function showAlert(message) {
   try {
-    tg.showAlert(message);
+    if (tg && tg.showAlert) {
+      tg.showAlert(message);
+    } else {
+      alert(message);
+    }
   } catch {
     alert(message);
   }
@@ -750,6 +784,8 @@ function showAlert(message) {
 
 function haptic(type = "light") {
   try {
+    if (!tg || !tg.HapticFeedback) return;
+
     if (type === "success") {
       tg.HapticFeedback.notificationOccurred("success");
     } else if (type === "error") {
@@ -969,11 +1005,18 @@ function renderChart(operations) {
 
   if (mainChart) {
     mainChart.destroy();
+    mainChart = null;
   }
 
   if (!labels.length) {
     return;
   }
+
+  const legendColor = cssVar("--text-secondary") || "#4b5563";
+  const tooltipBg = cssVar("--surface-2") || "#23282e";
+  const tooltipTitle = cssVar("--text") || "#f3f4f6";
+  const tooltipBody = cssVar("--text-secondary") || "#d1d5db";
+  const tooltipBorder = cssVar("--border") || "#333a42";
 
   mainChart = new Chart(context, {
     type: "doughnut",
@@ -996,9 +1039,16 @@ function renderChart(operations) {
           labels: {
             boxWidth: 10,
             padding: 9,
-            color: "#6b7280",
+            color: legendColor,
             font: { size: 11 }
           }
+        },
+        tooltip: {
+          backgroundColor: tooltipBg,
+          titleColor: tooltipTitle,
+          bodyColor: tooltipBody,
+          borderColor: tooltipBorder,
+          borderWidth: 1
         }
       }
     }
@@ -1097,6 +1147,15 @@ function renderAll() {
   renderStats("expenseStats", calculateCategoryStats(operations, "expense"));
   renderStats("incomeStats", calculateCategoryStats(operations, "income"));
 }
+
+// Реакция на смену системной темы, если Telegram не задал свою
+window.matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", () => {
+    if (!tg || !tg.colorScheme) {
+      applyTheme();
+      renderAll();
+    }
+  });
 
 fillCategories();
 fillHistoryCategories();
