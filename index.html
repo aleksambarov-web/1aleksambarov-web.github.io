@@ -254,16 +254,6 @@
             color: white;
             border-color: transparent;
         }
-        .btn-type.saving {
-            background: linear-gradient(135deg, rgba(51, 144, 236, 0.1), rgba(37, 117, 196, 0.1));
-            border-color: #3390ec;
-            color: #3390ec;
-        }
-        .btn-type.saving.active {
-            background: linear-gradient(135deg, #3390ec, #2575c4);
-            color: white;
-            border-color: transparent;
-        }
         
         .user-select {
             display: flex;
@@ -856,6 +846,7 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
+        // КАТЕГОРИИ - инициализируем сразу
         const incomeCategories = [
             '💼 Зарплата', '🎁 Подарок', '📈 Инвестиции', '💰 Премия', 
             '🏆 Бонус', '💵 Подработка', '📊 Дивиденды', '🏠 Аренда',
@@ -879,6 +870,8 @@
             '👶 Дети', '🍼 Товары', '🧸 Игрушки', '🎂 Праздники',
             '📦 Другое'
         ];
+
+        const savingCategories = ['💰 Накопления', '🏦 Вклад', '📈 Инвестиции', '🎯 Цель', '💵 Резерв'];
 
         let transactions = [];
         let currentUser = 'husband';
@@ -925,6 +918,7 @@
             });
         }
 
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ - заполняем категории при инициализации
         function setType(type) {
             currentType = type;
             document.querySelectorAll('.btn-type').forEach(btn => {
@@ -934,7 +928,15 @@
                 }
             });
             
-            const categories = type === 'income' ? incomeCategories : (type === 'expense' ? expenseCategories : ['💰 Накопления', '🏦 Вклад', '📈 Инвестиции', '🎯 Цель', '💵 Резерв']);
+            let categories;
+            if (type === 'income') {
+                categories = incomeCategories;
+            } else if (type === 'expense') {
+                categories = expenseCategories;
+            } else {
+                categories = savingCategories;
+            }
+            
             const categorySelect = document.getElementById('category');
             categorySelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
         }
@@ -974,7 +976,6 @@
 
         async function loadData() {
             return new Promise(resolve => {
-                // Используем один ключ для всех
                 tg.CloudStorage.getItems(['family_transactions_shared'], (err, result) => {
                     transactions = result['family_transactions_shared'] ? JSON.parse(result['family_transactions_shared']) : [];
                     resolve();
@@ -1349,8 +1350,11 @@
 
         document.getElementById('date').valueAsDate = new Date();
 
+        // ИСПРАВЛЕНО - инициализируем категории при загрузке
         (async () => {
             await loadData();
+            // Заполняем категории сразу
+            setType('income');
             renderDashboard();
         })();
     </script>
